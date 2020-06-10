@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load mathfilters %}
+
+<ul class="collapsible">
+    <li class="center">
+        <div class="collapsible-header">
+            <input type="text" id="searchInput" placeholder="Search by title ..."
+                {% if not search == None %}value="{{search}}" {% endif %}>
+            <a href="#" id="searchLink"><i class="material-icons">search</i></a>
+        </div>
+    </li>
+</ul>
+<div class="row">
+    {% for i, movie in movies %}
+    <a title="Click to choose it" href="?moviename={{movie.title}}">
+        <div class="col s12 m12 l12">
+            <div class="card blue-grey darken-1">
+                <div class="card-content white-text">
+                    <span class="card-title">{{movie.title}}</span>
+                    <p>{{movie.overview}}</p>
+                    <ul>
+                        <li>
+                            <p><b>Starting:</b>{{movie.cast}}</p>
+                        </li>
+                        <li>
+                            <p><b>Director:</b>{{movie.director}}</p>
+                        </li>
+                        <li>
+                            <p><b>Production:</b>{{movie.production_companies}}</p>
+                        </li>
+                        <li>
+                            <p><b>Runtime:</b>{{movie.runtime}}</p>
+                        </li>
+                        <li>
+                            <p><b>Budget:</b>{{movie.budget}}</p>
+                        </li>
+                        <li>
+                            <p><b>Revenue:</b>{{movie.revenue}}</p>
+                        </li>
+                        <li>
+                            <p><b>Language:</b>{{movie.spoken_languages}}</p>
+                        </li>
+                        <li>
+                            <p><b>Country:</b>{{movie.production_countries}}</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endfor %}
+    {% if moviename %}
+    <ul class="collapsible">
+        <li class="center">
+            <div class="collapsible-header">
+                <h4>{{moviename}}</h4>
+            </div>
+        </li>
+    </ul>
+    {% endif %}
+    {% for movie in movies_similar %}
+    {% if not movie.title.values.0 == moviename %}
+    <a title="Click to choose it" href="?moviename={{movie.title.values.0}}">
+        <div class="col s12 m12 l12">
+            <div class="card green darken-3">
+                <div class="card-content white-text">
+                    <span class="card-title">{{movie.title.values.0}}</span>
+                    <p>{{movie.overview.values.0}}</p>
+                    <ul>
+                        <li>
+                            <p><b>Starting:</b>{{movie.cast.values.0}}</p>
+                        </li>
+                        <li>
+                            <p><b>Director:</b>{{movie.director.values.0}}</p>
+                        </li>
+                        <li>
+                            <p><b>Production:</b>{{movie.production_companies.values.0}}</p>
+                        </li>
+                        <li>
+                            <p><b>Runtime:</b>{{movie.runtime.values.0}}</p>
+                        </li>
+                        <li>
+                            <p><b>Budget:</b>{{movie.budget.values.0}}</p>
+                        </li>
+                        <li>
+                            <p><b>Revenue:</b>{{movie.revenue.values.0}}</p>
+                        </li>
+                        <li>
+                            <p><b>Language:</b>{{movie.spoken_languages.values.0}}</p>
+                        </li>
+                        <li>
+                            <p><b>Country:</b>{{movie.production_countries.values.0}}</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </a>
+    {% endif %}
+    {% endfor %}
+    <p class="center">Showing {{currentPage|mul:10|sub:9}} - {{ currentPage|mul:10 }} Movies</p>
+</div>
+<ul class="pagination center">
+    {% for page in pages %}
+    {% if forloop.counter == currentPage %}
+    <li class="active"><a
+            href="?{% if moviename %}moviename={{moviename}}{% endif %}{% if not search == None %}search={{search}}{% endif %}&p={{page}}">{{page}}</a>
+    </li>
+    {% else %}
+    <li class="waves-effect"><a
+            href="?{% if moviename %}moviename={{moviename}}{% endif %}{% if not search == None %}search={{search}}{% endif %}&p={{page}}">{{page}}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    const searchInput = document.getElementById("searchInput");
+    searchInput.addEventListener("change", () => {
+        const srchInp = searchInput.value.trim();
+        if (srchInp.length > 0)
+            document.getElementById("searchLink").href = `/?search=${searchInput.value.trim()}`
+        else
+            document.getElementById("searchLink").href = '#';
+    });
+</script>
+{% endblock %}
